@@ -1,24 +1,3 @@
-<!--
-  ─────────────────────────────────────────────────────────────────────────────
-  ADDING IMAGES
-  ─────────────────────────────────────────────────────────────────────────────
-  Put your image files in this folder:
-
-      docs/images/
-
-  and reference them with a relative path, e.g.:
-
-      ![Screenshot](docs/images/my-screenshot.png)
-
-  The logo below already exists at assets/frida_link_logo.png.
-  Recommended images to add:
-      docs/images/screenshot-connection.png   — the connection screen
-      docs/images/screenshot-library.png      — the mod library with icons
-      docs/images/screenshot-injection.png    — the injection console
-      docs/images/screenshot-settings.png     — the settings screen
-  ─────────────────────────────────────────────────────────────────────────────
--->
-
 <p align="center">
   <img src="assets/frida_link_logo.png" alt="Frida Link logo" width="160">
 </p>
@@ -37,9 +16,8 @@
 ---
 
 **Frida Link** is a Windows desktop app for managing and injecting Frida mods
-into rooted **Meta Quest** games over **wireless ADB**. Point it at your
-headset's IP, and it handles the whole pipeline — connect, verify root, keep
-`frida-server` running, and launch your mod scripts with a live console.
+into rooted **Meta Quest** games over **wireless ADB**.
+> This app **will not** root your headset or install frida-server for you.
 
 ## Features
 
@@ -74,9 +52,6 @@ headset's IP, and it handles the whole pipeline — connect, verify root, keep
 | Settings | Add / edit mod |
 | --- | --- |
 | <img src="docs/images/screenshot-settings.png" alt="Settings" width="400"> | <img src="docs/images/screenshot-add-mod.png" alt="Add mod" width="400"> |
-
-> Drop your screenshots into `docs/images/` to fill these in — or delete the
-> placeholders you don't use.
 
 ## Requirements
 
@@ -134,18 +109,6 @@ ISCC.exe installer\frida_link_setup.iss
 # installer\dist\FridaLink-Setup-1.0.0.exe
 ```
 
-## How app icons work
-
-When a headset is connected, Frida Link fetches each mod's app icon by:
-1. Locating the installed APK via `pm path <bundle_id>`
-2. Listing its `res/` images with `unzip -l` on the headset (no APK download)
-3. Picking the biggest square PNG/WebP — the launcher icon — and streaming it
-   back with `adb exec-out`
-4. Caching it in the app support folder under `icons/<bundle_id>.png`
-
-Display priority: **your uploaded icon → fetched app icon → placeholder**.
-Use the `⋮` menu on a mod to re-fetch the app icon or remove a custom icon.
-
 ## Settings reference
 
 | Setting | Description |
@@ -169,17 +132,3 @@ Use the `⋮` menu on a mod to re-fetch the app icon or remove a custom icon.
   versions should match to avoid attach errors.
 - **Can't reach the headset** — make sure both devices are on the same
   network and wireless ADB is enabled (`adb tcpip 5555`).
-
-## Project layout
-
-```
-lib/
-  core/models/        AppSettings, ModEntry, ConnectionState
-  core/services/      adb, frida, storage, process runner, app-icon fetch
-  controllers/        Riverpod state (connection, app data, sessions, icons)
-  screens/            connection, mod library, add/edit mod, injection, settings
-  widgets/            shared UI (drop zones, console, color picker, title bar)
-installer/            Inno Setup script + built setup.exe
-assets/               Logo and other bundled assets
-docs/images/         Screenshots for this README
-```
