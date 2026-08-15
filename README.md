@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/frida_link_logo.png" alt="Frida Link logo" width="160">
+  <img src="assets/frida_link_logo.png" alt="Frida Link logo" width="320">
 </p>
 
 <h1 align="center">Frida Link</h1>
