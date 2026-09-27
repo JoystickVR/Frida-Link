@@ -11,6 +11,7 @@ class AppSettings {
     this.neverAskDefaultDevice = false,
     this.accentColor = _defaultAccent,
     this.useMaterial2 = false,
+    this.onboardingCompleted = false,
   });
 
   /// Path to the adb binary. Empty string = use `adb` from PATH.
@@ -43,6 +44,8 @@ class AppSettings {
   /// When true, uses the older Material 2 look instead of Material 3.
   final bool useMaterial2;
 
+  final bool onboardingCompleted;
+
   static const String _defaultTemplate =
       'frida -U -f "{bundle_id}" -l "{bridge}" -l "{script}"';
   static const String _defaultBundleTemplate = 'com.{app}.{app}';
@@ -59,6 +62,7 @@ class AppSettings {
     bool? neverAskDefaultDevice,
     int? accentColor,
     bool? useMaterial2,
+    bool? onboardingCompleted,
   }) {
     return AppSettings(
       adbPath: adbPath ?? this.adbPath,
@@ -73,6 +77,7 @@ class AppSettings {
           neverAskDefaultDevice ?? this.neverAskDefaultDevice,
       accentColor: accentColor ?? this.accentColor,
       useMaterial2: useMaterial2 ?? this.useMaterial2,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
     );
   }
 
@@ -96,6 +101,7 @@ class AppSettings {
         'neverAskDefaultDevice': neverAskDefaultDevice,
         'accentColor': accentColor,
         'useMaterial2': useMaterial2,
+        'onboardingCompleted': onboardingCompleted,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) => AppSettings(
@@ -114,6 +120,7 @@ class AppSettings {
         neverAskDefaultDevice: json['neverAskDefaultDevice'] as bool? ?? false,
         accentColor: json['accentColor'] as int? ?? _defaultAccent,
         useMaterial2: json['useMaterial2'] as bool? ?? false,
+        onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
       );
 }
 

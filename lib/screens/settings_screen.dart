@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../controllers/app_data_controller.dart';
 import '../core/models/app_settings.dart';
+import '../widgets/accent_swatch.dart';
 import '../widgets/color_picker.dart';
 import '../widgets/file_drop_zone.dart';
 
@@ -13,19 +14,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
-
-/// Pre-set accent colors offered in settings.
-const _accentPresets = <(String, int)>[
-  ('Meta Blue', 0xFF0081FB),
-  ('Terminal Green', 0xFF7CFA6F),
-  ('Fire Red', 0xFFEF5350),
-  ('Orange', 0xFFFFB300),
-  ('Amber', 0xFFFFC23E),
-  ('Purple', 0xFFAB47BC),
-  ('Pink', 0xFFE91E63),
-  ('Teal', 0xFF26A69A),
-  ('Indigo', 0xFF5C6BC0),
-];
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late final TextEditingController _adbPath;
@@ -76,6 +64,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await ref
           .read(appDataControllerProvider.notifier)
           .updateSettings((s) => s.copyWith(accentColor: picked.value));
+    }
+  }
+
+  Future<void> _redoOnboarding() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Are you sure?'),
+        content: const Text(
+          'This replays the onboarding guide. Your mods and settings stay '
+          'unchanged unless you change them during setup.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Redo onboarding'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await ref
+          .read(appDataControllerProvider.notifier)
+          .updateSettings((s) => s.copyWith(onboardingCompleted: false));
     }
   }
 
@@ -277,7 +293,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     style: TextStyle(
                         fontWeight: FontWeight.w600, color: scheme.onSurface)),
                 const SizedBox(height: 4),
-                Text('Tokens: {bridge} {script} {app} {bundle_id} {device} · '
+                Text(
+                    'Tokens: {bridge} {script} {app} {bundle_id} {device} · '
                     'use {bundle_id} with -f to spawn the app',
                     style: TextStyle(fontSize: 11, color: scheme.outline)),
                 const SizedBox(height: 10),
@@ -290,8 +307,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 TextButton.icon(
                   onPressed: () {
                     _cmdTemplate.text = defaultCommandTemplate();
-                    _bundleTemplate.text =
-                        'com.{app}.{app}';
+                    _bundleTemplate.text = 'com.{app}.{app}';
                     _save();
                   },
                   icon: const Icon(Icons.restore, size: 16),
@@ -340,8 +356,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    for (final (name, argb) in _accentPresets)
-                      _AccentSwatch(
+                    for (final (name, argb) in accentPresets)
+                      AccentSwatch(
                         name: name,
                         color: Color(argb),
                         selected: settings.accentColor == argb,
@@ -425,6 +441,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text('Onboarding',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, color: scheme.onSurface)),
+                const SizedBox(height: 4),
+                Text(
+                    'Replay the animated setup guide and connection walkthrough.',
+                    style: TextStyle(fontSize: 12, color: scheme.outline)),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: _redoOnboarding,
+                  icon: const Icon(Icons.replay, size: 16),
+                  label: const Text('Redo onboarding'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
                   children: [
                     Text('Connection history',
@@ -465,52 +505,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         const SizedBox(height: 24),
       ],
-    );
-  }
-}
-
-/// Circular preset swatch with a selection ring/check.
-class _AccentSwatch extends StatelessWidget {
-  const _AccentSwatch({
-    required this.name,
-    required this.color,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String name;
-  final Color color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Tooltip(
-      message: name,
-      child: Material(
-        shape: const CircleBorder(),
-        color: color,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: selected ? scheme.onSurface : scheme.outlineVariant,
-                width: selected ? 2.4 : 1,
-              ),
-            ),
-            alignment: Alignment.center,
-            child: selected
-                ? const Icon(Icons.check, size: 18, color: Colors.white)
-                : null,
-          ),
-        ),
-      ),
     );
   }
 }

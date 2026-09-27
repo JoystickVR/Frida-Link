@@ -43,7 +43,20 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/app_icon.png
     - assets/frida_link_logo.png
+
+  fonts:
+    - family: Selawik
+      fonts:
+        - asset: assets/fonts/Selawik/selawkl.ttf
+          weight: 300
+        - asset: assets/fonts/Selawik/selawk.ttf
+          weight: 400
+        - asset: assets/fonts/Selawik/selawksb.ttf
+          weight: 600
+        - asset: assets/fonts/Selawik/selawkb.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

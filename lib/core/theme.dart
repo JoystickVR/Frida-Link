@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 /// Material 3 (Material You) theme for Frida Link, seeded from a user-chosen
@@ -38,6 +40,7 @@ ThemeData buildFridaTheme({
     useMaterial3: !material2,
     brightness: dark ? Brightness.dark : Brightness.light,
     colorScheme: withAccent.colorScheme,
+    fontFamily: Platform.isLinux ? 'Selawik' : null,
     scaffoldBackgroundColor: withAccent.colorScheme.surface,
     visualDensity: VisualDensity.compact,
     dividerColor: withAccent.colorScheme.outlineVariant,
@@ -49,7 +52,7 @@ ThemeData buildFridaTheme({
       displayColor: scheme.onSurface,
     ),
     // Cards: M3 "medium" corner (12), tonal elevation via surfaceContainer.
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: scheme.surfaceContainerLow,
       elevation: 0,
       margin: EdgeInsets.zero,
@@ -85,7 +88,7 @@ ThemeData buildFridaTheme({
       ),
     ),
     // Dialogs / bottom sheets get M3 extra-large corners (28).
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: scheme.surfaceContainerLow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),

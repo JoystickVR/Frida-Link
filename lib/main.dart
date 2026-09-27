@@ -9,6 +9,7 @@ import 'controllers/connection_controller.dart';
 import 'core/theme.dart';
 import 'screens/connection_screen.dart';
 import 'screens/home_shell.dart';
+import 'screens/onboarding_screen.dart';
 
 /// Picks the script path (if any) passed as a launch argument, e.g. when the
 /// user right-clicked a `.ts`/`.js` and chose "Open with Frida Link".
@@ -35,8 +36,10 @@ Future<void> main() async {
     title: 'Frida Link',
     titleBarStyle: TitleBarStyle.hidden,
     windowButtonVisibility: false,
+    backgroundColor: Colors.transparent,
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.setIcon('assets/app_icon.png');
     await windowManager.show();
     await windowManager.focus();
   });
@@ -109,10 +112,30 @@ class _RootRouterState extends ConsumerState<_RootRouter>
 
   @override
   Widget build(BuildContext context) {
+    final data = ref.watch(appDataControllerProvider);
+    if (!data.loaded) return const _StartupSplash();
+    if (!data.settings.onboardingCompleted) return const OnboardingScreen();
     final state = ref.watch(connectionControllerProvider);
     if (state.isConnected) {
       return const HomeShell();
     }
     return const ConnectionScreen();
+  }
+}
+
+class _StartupSplash extends StatelessWidget {
+  const _StartupSplash();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: SizedBox(
+          width: 220,
+          height: 124,
+          child: Image.asset('assets/frida_link_logo.png', fit: BoxFit.contain),
+        ),
+      ),
+    );
   }
 }

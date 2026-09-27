@@ -9,10 +9,15 @@ final storageProvider = Provider<StorageService>((ref) => StorageService());
 
 /// Combined persisted state: settings + mod library.
 class AppData {
-  const AppData({required this.settings, required this.mods});
+  const AppData({
+    required this.settings,
+    required this.mods,
+    this.loaded = false,
+  });
 
   final AppSettings settings;
   final List<ModEntry> mods;
+  final bool loaded;
 }
 
 /// Loads once on startup and persists on every mutation. This is the single
@@ -28,11 +33,19 @@ class AppDataController extends StateNotifier<AppData> {
     if (_ready) return;
     _ready = true;
     final data = await _storage.load();
-    state = AppData(settings: data.settings, mods: data.mods);
+    state = AppData(
+      settings: data.settings,
+      mods: data.mods,
+      loaded: true,
+    );
   }
 
   Future<void> saveSettings(AppSettings next) async {
-    state = AppData(settings: next, mods: state.mods);
+    state = AppData(
+      settings: next,
+      mods: state.mods,
+      loaded: state.loaded,
+    );
     await _persist();
   }
 
@@ -46,22 +59,34 @@ class AppDataController extends StateNotifier<AppData> {
         if (m.id != mod.id) m,
       mod,
     ];
-    state = AppData(settings: state.settings, mods: list);
+    state = AppData(
+      settings: state.settings,
+      mods: list,
+      loaded: state.loaded,
+    );
     await _persist();
   }
 
   Future<void> patchMod(String id, ModEntry Function(ModEntry) mutate) async {
-    state = AppData(settings: state.settings, mods: [
-      for (final m in state.mods) m.id == id ? mutate(m) : m,
-    ]);
+    state = AppData(
+      settings: state.settings,
+      mods: [
+        for (final m in state.mods) m.id == id ? mutate(m) : m,
+      ],
+      loaded: state.loaded,
+    );
     await _persist();
   }
 
   Future<void> removeMod(String id) async {
-    state = AppData(settings: state.settings, mods: [
-      for (final m in state.mods)
-        if (m.id != id) m,
-    ]);
+    state = AppData(
+      settings: state.settings,
+      mods: [
+        for (final m in state.mods)
+          if (m.id != id) m,
+      ],
+      loaded: state.loaded,
+    );
     await _persist();
   }
 

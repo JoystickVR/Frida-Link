@@ -27,8 +27,9 @@ class AdbDeviceInfo {
       return const AdbDeviceInfo(serial: '', state: '');
     }
     final serialPart = parts.first;
-    final addr =
-        serialPart.contains(':') && !serialPart.contains('usb') ? serialPart : '';
+    final addr = serialPart.contains(':') && !serialPart.contains('usb')
+        ? serialPart
+        : '';
     return AdbDeviceInfo(
       serial: serialPart,
       state: parts.length > 1 ? parts[1] : 'device',
@@ -98,3 +99,23 @@ class ConnectedDevice {
 
 /// The result of running `adb connect`.
 enum ConnectOutcome { connected, alreadyConnected, failed }
+
+bool isValidIpv4Address(String value) {
+  final parts = value.trim().split('.');
+  if (parts.length != 4) return false;
+  for (final part in parts) {
+    final octet = int.tryParse(part);
+    if (octet == null || octet < 0 || octet > 255) return false;
+  }
+  return true;
+}
+
+bool isValidPortNumber(String value) {
+  final port = int.tryParse(value.trim());
+  return port != null && port >= 1 && port <= 65535;
+}
+
+String buildWirelessAddress(String host, String port) {
+  final trimmedPort = port.trim();
+  return '${host.trim()}:${trimmedPort.isEmpty ? '5555' : trimmedPort}';
+}
