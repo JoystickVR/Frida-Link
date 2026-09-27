@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Inject Frida mods into rooted Meta Quest games over wireless ADB.</b><br>
-  Windows desktop app · Flutter · x64
+  Windows and Linux desktop app · Flutter · x64
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
 
 ---
 
-**Frida Link** is a Windows desktop app for managing and injecting Frida mods
+**Frida Link** is a desktop app for managing and injecting Frida mods
 into rooted **Meta Quest** games over **wireless ADB**.
 > This app **will not** root your headset or install frida-server for you.
 
